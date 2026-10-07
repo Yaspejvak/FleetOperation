@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The Drivers bounded context: Domain, Application and Infrastructure as folders. Plan: docs/plans/drivers.md -->
+  <ItemGroup>
+    <ProjectReference Include="../Fserp.FleetOperations.Modules.Drivers.Contracts/Fserp.FleetOperations.Modules.Drivers.Contracts.csproj" />
+    <ProjectReference Include="../../Fleet/Fserp.FleetOperations.Modules.Fleet.Contracts/Fserp.FleetOperations.Modules.Fleet.Contracts.csproj" />
+    <PackageReference Include="MPCore.Domain" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Application" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Persistence.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Security.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Audit.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <!-- Provider-neutral relational mapping (schema, table, column names, index names) for Infrastructure/Persistence. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+    <!-- Input validators in Application/Validators; the version MPCore.Validation.FluentValidation 0.9.3 uses. -->
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+  </ItemGroup>
+  <!--
+    Nothing is cached for drivers (D-6, and the plan's query table says "Cached: no" for both queries), so
+    MPCore.Caching.Abstractions is deliberately absent: the module cannot reference a cache port it must
+    not use.
+  -->
+</Project>

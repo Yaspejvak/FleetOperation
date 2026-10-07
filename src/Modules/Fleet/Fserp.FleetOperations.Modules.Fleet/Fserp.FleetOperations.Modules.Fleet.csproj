@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The Fleet bounded context: Domain, Application and Infrastructure as folders. Plan: docs/plans/fleet.md -->
+  <ItemGroup>
+    <ProjectReference Include="../Fserp.FleetOperations.Modules.Fleet.Contracts/Fserp.FleetOperations.Modules.Fleet.Contracts.csproj" />
+    <PackageReference Include="MPCore.Domain" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Application" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Persistence.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Security.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Audit.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Caching.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <!-- Provider-neutral relational mapping (schema, table, column names, index names) for Infrastructure/Persistence. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+    <!-- Input validators in Application/Validators; the version MPCore.Validation.FluentValidation 0.9.3 uses. -->
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <!--
+      ILogger in AvailableVehiclesCacheEvictionHandler (docs/architecture.md, decision 4, as amended).
+      Abstractions only: no provider, no configuration. It already arrived transitively through
+      MPCore.Application at the same 10.0.11; declared here because the module's own source now names the
+      type, and a transitive dependency is not a contract.
+    -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
+  </ItemGroup>
+</Project>

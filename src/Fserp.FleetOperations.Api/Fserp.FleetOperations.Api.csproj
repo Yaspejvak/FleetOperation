@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../Fserp.FleetOperations.Infrastructure/Fserp.FleetOperations.Infrastructure.csproj" />
+    <!-- One reference per bounded-context module, so the host can register it. -->
+    <ProjectReference Include="../Modules/Fleet/Fserp.FleetOperations.Modules.Fleet/Fserp.FleetOperations.Modules.Fleet.csproj" />
+    <ProjectReference Include="../Modules/Drivers/Fserp.FleetOperations.Modules.Drivers/Fserp.FleetOperations.Modules.Drivers.csproj" />
+    <ProjectReference Include="../Modules/Operations/Fserp.FleetOperations.Modules.Operations/Fserp.FleetOperations.Modules.Operations.csproj" />
+    <ProjectReference Include="../Modules/Administration/Fserp.FleetOperations.Modules.Administration/Fserp.FleetOperations.Modules.Administration.csproj" />
+    <PackageReference Include="MPCore.Hosting" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Localization" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Messaging.Wolverine" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Security.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Security.AspNetCore" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Tenancy.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Validation.FluentValidation" Version="$(MPCoreVersion)" />
+    <!-- Design-time only: `dotnet ef migrations` with this project as the startup project. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" PrivateAssets="all" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
+    <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.83.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.83.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.83.0" PrivateAssets="all" />
+    <PackageReference Include="MPCore.Transport.Grpc" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Transport.Http" Version="$(MPCoreVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+    <PackageReference Include="MPCore.Observability.Prometheus" Version="$(MPCoreVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="Protos/platform_probe.proto" GrpcServices="Server" />
+    <!--
+      Server only, like every other contract here: this host serves VehicleService and never consumes it,
+      so the deployed assembly carries no client stub. The transport tests generate their own client from
+      this same .proto; see the Protobuf item in tests/Fserp.FleetOperations.UnitTests.
+    -->
+    <Protobuf Include="Protos/fleet/v1/vehicles.proto" GrpcServices="Server" ProtoRoot="Protos" />
+    <Protobuf Include="Protos/operations/v1/missions.proto" GrpcServices="Server" ProtoRoot="Protos" />
+  </ItemGroup>
+</Project>

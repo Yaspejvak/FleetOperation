@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="operations.mission_required_capacity_must_be_positive" xml:space="preserve"><value>ظرفیت موردنیاز مأموریت باید بیشتر از صفر کیلوگرم باشد.</value></data>
+  <data name="operations.mission_location_required" xml:space="preserve"><value>مبدأ و مقصد مأموریت الزامی‌اند.</value></data>
+  <data name="operations.mission_invalid_transition" xml:space="preserve"><value>مأموریت نمی‌تواند از وضعیت فعلی به وضعیت درخواستی تغییر کند.</value></data>
+  <data name="operations.mission_not_assignable" xml:space="preserve"><value>فقط مأموریت زمان‌بندی‌شده را می‌توان اختصاص داد.</value></data>
+  <data name="operations.mission_not_found" xml:space="preserve"><value>مأموریت پیدا نشد.</value></data>
+  <data name="operations.mission_vehicle_not_found" xml:space="preserve"><value>وسیلهٔ نقلیهٔ مشخص‌شده برای این تخصیص پیدا نشد.</value></data>
+  <data name="operations.mission_driver_not_found" xml:space="preserve"><value>رانندهٔ مشخص‌شده برای این تخصیص پیدا نشد.</value></data>
+</root>

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "Fserp.FleetOperations.Api.Grpc";
+
+package fserp.fleetoperations.v1;
+
+service PlatformProbe {
+  rpc GetStatus (StatusRequest) returns (StatusReply);
+}
+
+message StatusRequest {}
+
+message StatusReply {
+  string service = 1;
+  string status = 2;
+}

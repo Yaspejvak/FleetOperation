@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The only Drivers types other modules may use: the eligibility reader and the commitment port.
+    Fleet.Contracts is referenced for the VehicleType list only (owner decision X-5).
+  -->
+  <ItemGroup>
+    <ProjectReference Include="../../Fleet/Fserp.FleetOperations.Modules.Fleet.Contracts/Fserp.FleetOperations.Modules.Fleet.Contracts.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <!-- One reference per bounded-context module, so AppDbContext can apply its mappings:
+         <ProjectReference Include="../Modules/Billing/Fserp.FleetOperations.Modules.Billing/Fserp.FleetOperations.Modules.Billing.csproj" />
+         See src/Modules/README.md. -->
+    <ProjectReference Include="../Modules/Fleet/Fserp.FleetOperations.Modules.Fleet/Fserp.FleetOperations.Modules.Fleet.csproj" />
+    <ProjectReference Include="../Modules/Drivers/Fserp.FleetOperations.Modules.Drivers/Fserp.FleetOperations.Modules.Drivers.csproj" />
+    <ProjectReference Include="../Modules/Operations/Fserp.FleetOperations.Modules.Operations/Fserp.FleetOperations.Modules.Operations.csproj" />
+    <ProjectReference Include="../Modules/Administration/Fserp.FleetOperations.Modules.Administration/Fserp.FleetOperations.Modules.Administration.csproj" />
+    <PackageReference Include="MPCore.Caching.Hybrid" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Persistence.EntityFrameworkCore.PostgreSql" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Messaging.Wolverine" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Resilience.Http" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Audit.EntityFrameworkCore.PostgreSql" Version="$(MPCoreVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+  </ItemGroup>
+</Project>

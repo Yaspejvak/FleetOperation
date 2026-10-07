@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Tests against a real PostgreSQL: the migrations, the unique index on the plate number, the xmin
+    concurrency token and the audit trail (same-transaction capture and detached rejected attempts).
+    xmin and the audit tables are PostgreSQL features, so no in-memory provider is used.
+
+    The database comes from FLEETOPS_TEST_POSTGRES when set (a connection string to a disposable
+    database), otherwise from a Testcontainers container, which needs Docker. With neither, every test
+    reports Skipped with the reason; none passes vacuously.
+
+    Round 12 adds the cache gate of docs/architecture.md decision 4 against a real Redis: eviction,
+    expiration and a Redis outage. Redis comes from FLEETOPS_TEST_REDIS when set (a StackExchange.Redis
+    configuration string), otherwise from a Testcontainers Redis container, on exactly the same terms.
+    Those tests need both dependencies, and their skip reason names whichever is missing.
+  -->
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Fserp.FleetOperations.Api/Fserp.FleetOperations.Api.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.5.85" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.15.0" />
+    <!--
+      The Redis half of the cache gate (round 12). Same major/minor as Testcontainers.PostgreSql, so one
+      Testcontainers core version serves both fixtures.
+    -->
+    <PackageReference Include="Testcontainers.Redis" Version="4.15.0" />
+    <!--
+      The outage test exercises GET /api/fleet/vehicles/available through the real Program pipeline, so
+      the 200 it asserts is the status a caller observes, not a handler return value. Same version as the
+      unit-test host factory uses.
+    -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12" />
+  </ItemGroup>
+</Project>

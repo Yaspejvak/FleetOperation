@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The Operations bounded context: Domain, Application and Infrastructure as folders. Plan: docs/plans/operations.md -->
+  <ItemGroup>
+    <ProjectReference Include="../../Fleet/Fserp.FleetOperations.Modules.Fleet.Contracts/Fserp.FleetOperations.Modules.Fleet.Contracts.csproj" />
+    <ProjectReference Include="../../Drivers/Fserp.FleetOperations.Modules.Drivers.Contracts/Fserp.FleetOperations.Modules.Drivers.Contracts.csproj" />
+    <PackageReference Include="MPCore.Domain" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Application" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Persistence.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Security.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="MPCore.Audit.Abstractions" Version="$(MPCoreVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <!-- Provider-neutral relational mapping (schema, table, column names, index names and filters) for Infrastructure/Persistence. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+    <!-- Input validators in Application/Validators; the version MPCore.Validation.FluentValidation 0.9.3 uses. -->
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+  </ItemGroup>
+</Project>

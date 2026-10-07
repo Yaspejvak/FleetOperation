@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The only Fleet types other modules may use: the vehicle-type list, the availability reader and the
+    commitment port. No MP Core package and no other project is referenced; see docs/plans/fleet.md.
+  -->
+</Project>

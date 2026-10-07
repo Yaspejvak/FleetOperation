@@ -1,0 +1,44 @@
+# What never belongs in the build context. Two reasons appear here: size, and keeping anything that
+# could hold a local secret out of a layer.
+
+# Build output of a local build. It would be copied in and then overwritten, slowly.
+**/bin/
+**/obj/
+**/TestResults/
+
+# Not published by this image: the host is what is built.
+tests/
+docs/
+.mpcore/
+.claude/
+**/*.md
+
+# Local and editor state.
+.git/
+.gitignore
+.vs/
+.vscode/
+.idea/
+**/*.user
+**/*.suo
+**/*.DotSettings.user
+
+# Local configuration that can hold a real value. appsettings.json itself is published on purpose: it
+# carries placeholders only, and every real value arrives as an environment variable.
+.env
+.env.*
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/secrets.json
+**/*.pfx
+**/*.key
+**/*.pem
+NuGet.config
+nuget.config
+
+# Not inputs to the image.
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml

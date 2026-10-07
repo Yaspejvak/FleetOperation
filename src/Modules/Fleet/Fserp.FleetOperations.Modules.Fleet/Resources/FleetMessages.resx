@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="fleet.vehicle_plate_number_required" xml:space="preserve">
+    <value>A plate number is required.</value>
+  </data>
+  <data name="fleet.vehicle_plate_number_too_long" xml:space="preserve">
+    <value>The plate number must be at most 16 characters.</value>
+  </data>
+  <data name="fleet.vehicle_capacity_must_be_positive" xml:space="preserve">
+    <value>The capacity must be greater than zero kilograms.</value>
+  </data>
+  <data name="fleet.vehicle_plate_number_already_registered" xml:space="preserve">
+    <value>A vehicle with this plate number is already registered.</value>
+  </data>
+  <data name="fleet.vehicle_has_mission_commitment" xml:space="preserve">
+    <value>The vehicle is committed to a mission.</value>
+  </data>
+  <data name="fleet.vehicle_already_under_maintenance" xml:space="preserve">
+    <value>The vehicle is already under maintenance.</value>
+  </data>
+  <data name="fleet.vehicle_not_under_maintenance" xml:space="preserve">
+    <value>The vehicle is not under maintenance.</value>
+  </data>
+  <data name="fleet.vehicle_not_found" xml:space="preserve">
+    <value>The vehicle was not found.</value>
+  </data>
+  <data name="fleet.vehicle_not_active" xml:space="preserve">
+    <value>The vehicle is not active.</value>
+  </data>
+  <data name="fleet.vehicle_under_maintenance" xml:space="preserve">
+    <value>The vehicle is under maintenance.</value>
+  </data>
+  <data name="fleet.vehicle_capacity_insufficient" xml:space="preserve">
+    <value>The vehicle's capacity is below the capacity the mission requires.</value>
+  </data>
+  <data name="fleet.vehicle_not_available" xml:space="preserve">
+    <value>The vehicle is committed to another mission.</value>
+  </data>
+  <data name="fleet.vehicle_not_committed_to_mission" xml:space="preserve">
+    <value>The vehicle is not committed to this mission.</value>
+  </data>
+</root>

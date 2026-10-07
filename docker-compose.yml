@@ -1,0 +1,144 @@
+# A throwaway local stack: the host, the PostgreSQL it stores everything in, and the Redis the hybrid
+# cache uses as its shared level. Three services, no gateway, no identity provider — this host is a
+# bearer-only resource server and never hosts login, so the issuer is always somewhere else.
+#
+# Verified on 2026-10-06: the image built, all three services started, PostgreSQL and Redis reported
+# healthy, migrations ran, and /health/ready returned 200. A real OIDC issuer and listener-level
+# REST/gRPC port separation have not been verified. See OUTCOMES.md, section 4b.
+#
+# ---------------------------------------------------------------------------------------------------
+# NOTHING HERE IS REAL, AND NOTHING HERE MAY BECOME REAL.
+#
+# Every credential below defaults to a value containing "replace-me", which is obviously a placeholder
+# and is not a credential anyone should accept. Override each one from a local .env file that is never
+# committed, or from your deployment's secret store:
+#
+#   POSTGRES_PASSWORD, REDIS_PASSWORD      the two local service passwords
+#   SECURITY_AUTHORITY, SECURITY_AUDIENCE  your OIDC issuer and the audience this API accepts
+#   ROLE_OPERATOR, ROLE_FLEET_MANAGER,
+#   ROLE_ADMINISTRATOR                     the role names your issuer puts in a token (not secrets,
+#                                          but deployment-specific, so they are not written in code)
+#
+# A real realm URL, client secret or connection string must never be written into this file.
+# ---------------------------------------------------------------------------------------------------
+
+name: fserp-fleetoperations
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fserp_fleetoperations}
+      POSTGRES_USER: ${POSTGRES_USER:-replace-me-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-me-password}
+    # The application waits on this, not on the container merely existing: an accepting socket is not a
+    # database that will answer, and a migration that runs a second too early fails the whole start.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready --username="$${POSTGRES_USER}" --dbname="$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    # Not published by default: nothing outside the stack needs it, and an exposed database with a
+    # placeholder password is how a throwaway stack becomes an incident. Uncomment to attach psql.
+    # ports:
+    #   - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    # --save "" keeps the cache in memory only. Nothing here is a source of truth: the cached available
+    # list is advisory and Assign re-checks every rule against PostgreSQL (docs/architecture.md,
+    # decision 4), so there is nothing to persist and nothing to lose.
+    command:
+      - redis-server
+      - --requirepass
+      - ${REDIS_PASSWORD:-replace-me-password}
+      - --save
+      - ""
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-replace-me-password}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli -a "$${REDIS_PASSWORD}" ping | grep -q PONG
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    # Not published by default, for the same reason as PostgreSQL.
+    # ports:
+    #   - "6379:6379"
+
+  app:
+    # No build secret is declared here, so "docker compose up --build" works on a machine whose NuGet
+    # feed is already reachable. When it is not, build the image once with the feed configuration as a
+    # BuildKit secret and let compose use the result instead of rebuilding:
+    #   docker build --secret id=nuget_config,src="$HOME/.nuget/NuGet/NuGet.Config" \
+    #     -t fserp-fleetoperations:local .
+    #   docker compose up        # no --build: the tag below already exists
+    image: ${IMAGE:-fserp-fleetoperations:local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      # One transport per port, as appsettings.json declares the two Kestrel listeners and as
+      # Transport:EnforcePortSeparation then binds each endpoint. REST first, gRPC second.
+      - "${REST_PORT:-8080}:8080"
+      - "${GRPC_PORT:-8081}:8081"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+
+      # ------------------------------------------------------------------------------------------
+      # The one place in this repository that turns migration-on-startup on (lead decision L-31).
+      # The host's default is off and stays off: appsettings.json ships false, and
+      # Api/Hosting/DatabaseStartup.cs returns before it resolves anything unless this says otherwise.
+      # A compose stack brings up an empty PostgreSQL that nobody is going to migrate by hand, which is
+      # the whole reason this exists; a real deployment runs "dotnet ef database update" or a job that
+      # runs once, because several instances starting at the same time would race on the same schema.
+      # ------------------------------------------------------------------------------------------
+      Database__MigrateOnStartup: "true"
+
+      # Service addresses inside the compose network. Neither value is a secret in itself; the password
+      # inside it is, which is why it comes from the environment and defaults to a placeholder.
+      ConnectionStrings__PostgreSql: >-
+        Host=postgres;Port=5432;Database=${POSTGRES_DB:-fserp_fleetoperations};Username=${POSTGRES_USER:-replace-me-user};Password=${POSTGRES_PASSWORD:-replace-me-password}
+      # abortConnect=false so a Redis outage degrades the cache rather than the host start: the cache is
+      # not a readiness dependency (Api/Hosting/HostHealthChecks.cs checks the database only).
+      ConnectionStrings__Redis: >-
+        redis:6379,abortConnect=false,password=${REDIS_PASSWORD:-replace-me-password}
+
+      # The OIDC issuer this host validates tokens against. It is never started by this stack: login,
+      # signup, OTP and password handling are Product surfaces and are never implemented here.
+      Security__Authority: ${SECURITY_AUTHORITY:-https://identity.invalid/realms/replace-me}
+      Security__Audiences__0: ${SECURITY_AUDIENCE:-replace-me-audience}
+      Security__RequireHttpsMetadata: ${SECURITY_REQUIRE_HTTPS_METADATA:-true}
+      Security__ClaimMapping__Preset: ${SECURITY_CLAIM_MAPPING_PRESET:-Keycloak}
+
+      # The role values the four policies require (docs/architecture.md, decision 5). Not secrets, but
+      # they depend on the identity provider, so no role name is written in code and the host refuses to
+      # start while any of them is empty. OperationalReader has no value of its own: it accepts the
+      # operator role or the fleet manager role.
+      Authorization__Roles__Operator: ${ROLE_OPERATOR:-replace-me-operator-role}
+      Authorization__Roles__FleetManager: ${ROLE_FLEET_MANAGER:-replace-me-fleet-manager-role}
+      Authorization__Roles__Administrator: ${ROLE_ADMINISTRATOR:-replace-me-administrator-role}
+
+      # Gateway__TrustedProxies is deliberately not set. Nothing sits in front of the host in this
+      # stack, and appsettings.json already ships an empty list, so the host reasons from the real
+      # connection and ignores X-Forwarded-* entirely. Adding a proxy here would be a trust decision.
+
+      # Description surfaces: off by default outside Development, and behind the bearer fallback when
+      # switched on. Set both to true in a local stack to use Swagger UI and grpcurl's reflection.
+      Transport__EnableOpenApi: ${TRANSPORT_ENABLE_OPENAPI:-false}
+      Transport__EnableGrpcReflection: ${TRANSPORT_ENABLE_GRPC_REFLECTION:-false}
+
+volumes:
+  postgres-data:

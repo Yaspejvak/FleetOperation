@@ -1,0 +1,79 @@
+// Fleet read surface over gRPC. Same Application queries as REST (GetVehicle, GetAvailableVehicles);
+// the service adapter only maps. Field numbers are permanent: never renumber, never reuse a removed
+// number, reserve what is removed. Plan: docs/plans/fleet.md.
+syntax = "proto3";
+
+package fserp.fleetoperations.fleet.v1;
+
+option csharp_namespace = "Fserp.FleetOperations.Api.Grpc.Fleet.V1";
+
+service VehicleService {
+  // One vehicle by id. NOT_FOUND when it does not exist.
+  rpc GetVehicle (GetVehicleRequest) returns (GetVehicleResponse);
+  // Vehicles that are Active, not under maintenance and not committed to a mission. Served through the
+  // hybrid cache, so it may lag a change by the cache's expiration at most.
+  rpc GetAvailableVehicles (GetAvailableVehiclesRequest) returns (GetAvailableVehiclesResponse);
+}
+
+// Mirrors Fleet.Contracts.VehicleType. The zero value is never a valid type.
+enum VehicleType {
+  VEHICLE_TYPE_UNSPECIFIED = 0;
+  VEHICLE_TYPE_VAN = 1;
+  VEHICLE_TYPE_TRUCK = 2;
+  VEHICLE_TYPE_HEAVY_TRUCK = 3;
+}
+
+enum OperationalStatus {
+  OPERATIONAL_STATUS_UNSPECIFIED = 0;
+  OPERATIONAL_STATUS_ACTIVE = 1;
+  OPERATIONAL_STATUS_INACTIVE = 2;
+}
+
+enum MaintenanceStatus {
+  MAINTENANCE_STATUS_UNSPECIFIED = 0;
+  MAINTENANCE_STATUS_NOT_UNDER_MAINTENANCE = 1;
+  MAINTENANCE_STATUS_UNDER_MAINTENANCE = 2;
+}
+
+// The displayed status: UNDER_MAINTENANCE wins, otherwise the operational status.
+enum VehicleStatus {
+  VEHICLE_STATUS_UNSPECIFIED = 0;
+  VEHICLE_STATUS_ACTIVE = 1;
+  VEHICLE_STATUS_INACTIVE = 2;
+  VEHICLE_STATUS_UNDER_MAINTENANCE = 3;
+}
+
+message Vehicle {
+  // UUID, canonical text form.
+  string vehicle_id = 1;
+  string plate_number = 2;
+  VehicleType vehicle_type = 3;
+  // Kilograms, decimal in invariant culture (for example "1250.5"). Protobuf has no decimal type.
+  string capacity_kg = 4;
+  OperationalStatus operational_status = 5;
+  MaintenanceStatus maintenance_status = 6;
+  VehicleStatus status = 7;
+  // UUID of the mission holding the vehicle; absent when not committed.
+  optional string committed_mission_id = 8;
+}
+
+message AvailableVehicle {
+  string vehicle_id = 1;
+  string plate_number = 2;
+  VehicleType vehicle_type = 3;
+  string capacity_kg = 4;
+}
+
+message GetVehicleRequest {
+  string vehicle_id = 1;
+}
+
+message GetVehicleResponse {
+  Vehicle vehicle = 1;
+}
+
+message GetAvailableVehiclesRequest {}
+
+message GetAvailableVehiclesResponse {
+  repeated AvailableVehicle vehicles = 1;
+}

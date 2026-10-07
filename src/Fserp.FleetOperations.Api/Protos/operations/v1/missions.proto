@@ -1,0 +1,64 @@
+// Operations read surface over gRPC. Same Application queries as REST (GetMission, GetActiveMissions);
+// the service adapter only maps. Field numbers are permanent: never renumber, never reuse a removed
+// number, reserve what is removed. Plan: docs/plans/operations.md.
+syntax = "proto3";
+
+package fserp.fleetoperations.operations.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Fserp.FleetOperations.Api.Grpc.Operations.V1";
+
+service MissionService {
+  // One mission by id. NOT_FOUND when it does not exist.
+  rpc GetMission (GetMissionRequest) returns (GetMissionResponse);
+  // Missions in Scheduled, Assigned or InProgress, one bounded page.
+  rpc GetActiveMissions (GetActiveMissionsRequest) returns (GetActiveMissionsResponse);
+}
+
+// The six challenge states, no others. Completed and Cancelled are terminal.
+enum MissionStatus {
+  MISSION_STATUS_UNSPECIFIED = 0;
+  MISSION_STATUS_DRAFT = 1;
+  MISSION_STATUS_SCHEDULED = 2;
+  MISSION_STATUS_ASSIGNED = 3;
+  MISSION_STATUS_IN_PROGRESS = 4;
+  MISSION_STATUS_COMPLETED = 5;
+  MISSION_STATUS_CANCELLED = 6;
+}
+
+message Mission {
+  // UUID, canonical text form.
+  string mission_id = 1;
+  string origin = 2;
+  string destination = 3;
+  // Kilograms, decimal in invariant culture (for example "800"). Protobuf has no decimal type.
+  string required_capacity_kg = 4;
+  // Absent while the mission is Draft.
+  google.protobuf.Timestamp scheduled_at = 5;
+  MissionStatus status = 6;
+  // UUIDs; absent until the mission is assigned.
+  optional string assigned_vehicle_id = 7;
+  optional string assigned_driver_id = 8;
+}
+
+message GetMissionRequest {
+  string mission_id = 1;
+}
+
+message GetMissionResponse {
+  Mission mission = 1;
+}
+
+message GetActiveMissionsRequest {
+  // 1-based. Zero or absent means the first page; the server normalises and bounds both values.
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message GetActiveMissionsResponse {
+  repeated Mission missions = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  int64 total = 4;
+}

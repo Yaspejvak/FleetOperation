@@ -1,0 +1,27 @@
+# Build and test output
+**/bin/
+**/obj/
+**/TestResults/
+
+# Local environment and credentials
+.env
+.env.*
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/secrets.json
+**/*.pfx
+**/*.p12
+**/*.key
+**/*.pem
+**/*.snk
+NuGet.config
+nuget.config
+
+# IDE and user-specific state
+.vs/
+.vscode/
+.idea/
+**/*.user
+**/*.suo
+**/*.DotSettings.user

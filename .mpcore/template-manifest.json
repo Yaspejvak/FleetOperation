@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 4,
+  "organization": "Fserp",
+  "component": "FleetOperations",
+  "productName": "Fserp.FleetOperations",
+  "shape": "modular-monolith",
+  "messaging": "none",
+  "transport": "both",
+  "businessAudit": "postgresql",
+  "cache": "hybrid",
+  "timeseries": "none",
+  "aiTooling": "claude",
+  "mpcoreVersion": "0.9.3",
+  "templateVersion": "0.9.3",
+  "cliVersion": "0.9.3",
+  "generatedAtUtc": "2026-10-05T07:06:53.2191182+00:00"
+}
